@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery-1.12.4.js"></script>    
+    <title>IOT Platform for SmartCities</title>
+  </head>
+
+<body>
+
+<form class="form-signin" id="IDMForm" method="post">
+  <h2 class="form-signin-heading">Keystone: API to get token</h2>
+  <input class="form-control" type="text" required name="username" id="username" placeholder="Username">
+  <input class="form-control" type="password" required name="password" id="password" placeholder="Password">
+  <input class="form-control" type="text" required name="service" id="idm_service" placeholder="Fiware-Service">
+  <input class="form-control" type="text" required name="subservice" id="idm_subservice" placeholder="Fiware-ServicePath">  
+  <input type="submit" id="idm_submitButton"  name="submitButton" value="Submit">
+  <button type="reset" value="Reset">Reset</button><p>
+  <input type="text" id="idm_result" value="..." size="100">    
+</form>
+
+
+<form class="form-signin" id="CBForm" method="post">
+  <h2 class="form-signin-heading">ContextBroker: API to create entity</h2>
+  <input class="form-control" type="text" required name="token" id="cb_token" placeholder="X-Auth-Token">
+  <input class="form-control" type="text" required name="service" id="cb_service" placeholder="Fiware-Service">
+  <input class="form-control" type="text" required name="subservice" id="cb_subservice" placeholder="Fiware-ServicePath">
+  <input class="form-control" type="text" required name="entityname" id="cb_entityname" placeholder="EntityName">
+  <input class="form-control" type="text" required name="entitytype" id="cb_entitytype" placeholder="EntityType">   
+  <input type="submit" id="cb_submitButton"  name="submitButton" value="Submit">
+  <button type="reset" value="Reset">Reset</button><p>
+  <input type="text" id="cb_result" value="..." size="100">      
+</form>
+
+
+<form class="form-signin" id="STHForm" method="post">
+  <h2 class="form-signin-heading">STH: API to get month aggregated serie</h2>
+  <input class="form-control" type="text" required name="token" id="sth_token" placeholder="X-Auth-Token">
+  <input class="form-control" type="text" required name="service" id="sth_service" placeholder="Fiware-Service">
+  <input class="form-control" type="text" required name="subservice" id="sth_subservice" placeholder="Fiware-ServicePath">
+  <input class="form-control" type="text" required name="entityid" id="sth_entityid" placeholder="EntityId">
+  <input class="form-control" type="text" required name="entitytype" id="sth_entitytype" placeholder="EntityType">  
+  <input class="form-control" type="text" required name="attribute" id="sth_attribute" placeholder="Attribute">   
+  <input type="submit" id="sth_submitButton"  name="submitButton" value="Submit">
+  <button type="reset" value="Reset">Reset</button><p>
+  <input type="text" id="sth_result" value="..." size="100">  
+</form>
+
+<form class="form-signin" id="CEPForm" method="post">
+  <h2 class="form-signin-heading">CEP: API to create a rule</h2>
+  <input class="form-control" type="text" required name="token" id="cep_token" placeholder="X-Auth-Token">
+  <input class="form-control" type="text" required name="service" id="cep_service" placeholder="Fiware-Service">
+  <input class="form-control" type="text" required name="subservice" id="cep_subservice" placeholder="Fiware-ServicePath">
+  <input class="form-control" type="text" required name="rulename" id="cep_rulename" placeholder="RuleName">  
+  <input class="form-control" type="text" required name="entityid" id="cep_entityid" placeholder="EntityId">
+  <input class="form-control" type="text" required name="entitytype" id="cep_entitytype" placeholder="EntityType">  
+  <input class="form-control" type="text" required name="attribute" id="cep_attribute" placeholder="Attribute">
+  <input class="form-control" type="text" required name="value" id="cep_value" placeholder="Value">
+  <input class="form-control" type="text" required name="email" id="cep_email" placeholder="Email">
+  <input type="submit" id="cep_submitButton"  name="submitButton" value="Submit">
+  <button type="reset" value="Reset">Reset</button><p>
+  <input type="text" id="cep_result" value="..." size="100">  
+</form>
+
+
+<script type="text/javascript">
+
+var proxy = "https://thingproxy.freeboard.io/fetch/";
+var endpoint = "https://195.235.93.224";
+
+  
+$("#IDMForm").submit(function(event) {
+   var token_data = {
+                "auth": {
+                   "identity": {
+                       "methods": [
+                          "password"
+                         ],
+                       "password": {
+                          "user": {
+                             "domain": {
+                                "name": $("#idm_service").val(),
+                             },
+                             "name": $("#username").val(),
+                             "password": $("#password").val(),
+                          }
+                       }
+                   },
+                   "scope": {
+                          "domain": {
+                             "name": $("#idm_service").val(),
+                          }
+                      }
+                }
+   };
+   $.ajax({
+     url: proxy + endpoint + ":15001/v3/auth/tokens",
+     type: "post",
+     data: JSON.stringify(token_data),
+     contentType: "application/json",
+     dataType: "json",
+     success: function(data, message, req){ document.getElementById("idm_result").value = JSON.stringify(req); alert("ok: "); },
+error: function(result){ alert("nok: " + result.status + " " + result.statusText); },
+     async: false,
+     cache: false
+});
+   return false;
+});
+
+
+
+$("#CBForm").submit(function(event) {
+   var entity_data = {
+      id: $("#cb_entityname").val(),
+      type: $("cb_#entitytype").val()
+};
+   $.ajax({
+     url: proxy + endpoint + ":10027/v2/entities",
+     type: "post",
+     data: JSON.stringify(entity_data),
+     contentType: "application/json",
+     dataType: "json",
+     headers: {
+      "x-auth-token": $("#cb_token").val(),
+      "fiware-service": $("#cb_service").val(),
+      "fiware-servicepath": "/" + $("#cb_subservice").val(),
+     },
+     <!-- success: function(data, message, req){ document.getElementById("cb_result").value = JSON.stringify(data); alert("ok"); }, -->
+     <!-- error: function(result){ alert("nok: " + result.status + " " + result.statusText); }, -->
+     complete: function(xhr) {
+        if (xhr.readyState == 4) {
+           if (xhr.status == 201) {
+               document.getElementById("cb_result").value = "Created";
+               alert("ok");
+           }
+        } else {
+           alert("NoK");
+        }
+     },
+     async: false,
+     cache: false
+   });
+   return false;
+});
+
+
+$("#STHForm").submit(function(event) {
+   var data = {}
+   $.ajax({
+     url: proxy + endpoint + ":18666/STH/v1/contextEntities/type/" + $("#sth_entitytype").val() + "/id/" + $("#sth_entityid").val() + "/attributes/" + $("#sth_attribute").val() + "?aggrMethod=sum&aggrPeriod=day&dateFrom=2017-10-01T22:00:00.000Z&dateTo=2017-10-30T22:00:00.000Z",
+     type: "get",
+     accepts: "application/json",
+     headers: {
+      "x-auth-token": $("#sth_token").val(),
+      "fiware-service": $("#sth_service").val(),
+      "fiware-servicepath": "/" + $("#sth_subservice").val(),
+     },
+     success: function(data, message, req){ document.getElementById("sth_result").value = JSON.stringify(data); alert("ok"); },
+     error: function(result){ alert("nok: " + result.status + " " + result.statusText); },
+     async: false
+   });
+   return false;
+});
+
+
+$("#CEPForm").submit(function(event) {
+   var rule_data = {
+      name: $("#cep_rulename").val(),
+      text: "select *,\"" + $("#cep_rulename").val() + "\" as ruleName from pattern [every ev=iotEvent((cast(`id`?, String)  regexp \"" + $("#cep_entityid").val() + "\") AND (cast(`type`?, String)  = \"" + $("#cep_entitytype").val() + "\") AND (cast(cast(`" + $("#cep_attribute").val() + "`?, String), int) < " + $("#cep_value").val() + "))]",
+      action: {
+        type: "email",
+        template: "Entity " + $("#cep_entityid").val() + " " + $("#cep_attribute").val() + " is " + $("#cep_value").val(),
+        parameters: {
+            to: $("#cep_email").val(),
+            from: "no-reply@iotplatform.telefonica.com",
+            subject: $("#cep_rulename").val()
+        }
+      }
+   };
+
+   $.ajax({
+     url: proxy + endpoint + ":18090/rules",
+     type: "post",
+     data: JSON.stringify(rule_data),
+     contentType: "application/json",
+     dataType: "json",
+     headers: {
+      "x-auth-token": $("#cep_token").val(),
+      "fiware-service": $("#cep_service").val(),
+      "fiware-servicepath": "/" + $("#cep_subservice").val(),
+     },
+     success: function(data, message, req){ document.getElementById("cep_result").value = JSON.stringify(data); alert("ok"); },
+     error: function(result){ alert("nok: " + result.status + " " + result.statusText); },
+     async: false,
+     cache: false
+   });
+   return false;
+});
+
+
+</script>
+
+
+</body>
+</html>

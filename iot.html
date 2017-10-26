@@ -86,8 +86,11 @@ $("#IDMForm").submit(function(event) {
                        }
                    },
                    "scope": {
-                          "domain": {
-                             "name": $("#idm_service").val(),
+                          "project": {
+                              "domain": {
+                                 "name": $("#idm_service").val(),
+                               },
+                               "name": "/" + $("#idm_subservice").val()
                           }
                       }
                 }

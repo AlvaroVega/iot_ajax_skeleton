@@ -149,7 +149,7 @@ $("#CBForm").submit(function(event) {
 $("#STHForm").submit(function(event) {
    var data = {}
    $.ajax({
-     url: proxy + endpoint + ":18666/STH/v1/contextEntities/type/" + $("#sth_entitytype").val() + "/id/" + $("#sth_entityid").val() + "/attributes/" + $("#sth_attribute").val() + "?aggrMethod=sum&aggrPeriod=day&dateFrom=2017-10-01T22:00:00.000Z&dateTo=2017-10-30T22:00:00.000Z",
+     url: proxy + endpoint + ":18666/STH/v1/contextEntities/type/" + $("#sth_entitytype").val() + "/id/" + $("#sth_entityid").val() + "/attributes/" + $("#sth_attribute").val() + "?hLimit=5&hOffset=0&aggrMethod=sum&aggrPeriod=minute&dateFrom=2017-10-01T22:00:00.000Z&dateTo=2017-10-30T22:00:00.000Z",
      type: "get",
      accepts: "application/json",
      headers: {
